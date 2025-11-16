@@ -190,6 +190,7 @@
             <option value="">Seleccionar...</option>
             <option value="51">51 (Avance)</option>
             <option value="45">45 (Fortificación)</option>
+	    <option value="64">64 (Avance pesado)</option>
           </select>
         </div>
         <div>
@@ -213,9 +214,9 @@
 
       <p class="small-note">
         Nota: rendimientos por defecto:<br />
-        BIT: 51 mm = 100 m, 45 mm = 80 m<br />
-        BARRA: 51 mm = 300 m, 45 mm = 250 m<br />
-        CULATIN: 51 mm = 2000 m, 45 mm = 2000 m<br />
+        BIT: 51 mm = 100 m, 45 mm = 80, 64 mm = 100  m<br />
+        BARRA: 51 mm = 300 m, 45 mm = 250 m, MF T38 (1,5 m) = 250 m*<br />
+        CULATIN: 51 mm = 2000 m, 45 mm = 2000, 64 mm = 2000 m<br />
         (Puedes pedir una versión avanzada con rendimientos editables desde la web).
       </p>
     </section>
@@ -265,9 +266,10 @@
   <script>
     // Parámetros de rendimiento (m por unidad)
     const parametros = {
-      BIT:   { "51": 100, "45": 80  },
+      BIT:   { "51": 100, "45": 80, "64": 100 },
       BARRA: { "51": 300, "45": 250 },
-      CULATIN: { "51": 2000, "45": 2000 }
+      BARRA_MF_T38: 250,
+      CULATIN: { "51": 2000, "45": 2000, "64": 2000 }
     };
 
     const STORAGE_KEY = "registro_perforacion_datos";
@@ -285,22 +287,26 @@
       return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
     }
 
-    function calcularConsumos(diametro, metrosPerforados) {
-      const d = String(diametro);
+    function calcularConsumos(diametro, metrosPerforados, largoBarra) {
+      const d = String(diametro);  
       const rendBit = parametros.BIT[d] || 0;
-      const rendBarra = parametros.BARRA[d] || 0;
-      const rendCulatin = parametros.CULATIN[d] || 0;
+      let rendBarra = parametros.BARRA[d] || 0;
+      if (Math.abs(largoBarra - 1.5) < 0.01 && parametros.BARRA_MF_T38) {
+      rendBarra = parametros.BARRA_MF_T38;
+  }
 
+      const rendCulatin = parametros.CULATIN[d] || 0;
       const bit = rendBit ? metrosPerforados / rendBit : 0;
       const barra = rendBarra ? metrosPerforados / rendBarra : 0;
       const culatin = rendCulatin ? metrosPerforados / rendCulatin : 0;
 
       return {
-        bit: redondear(bit),
-        barra: redondear(barra),
-        culatin: redondear(culatin)
-      };
-    }
+    	bit: redondear(bit),
+    	barra: redondear(barra),
+    	culatin: redondear(culatin)
+  };
+}
+
 
     function refrescarTabla() {
       const registros = cargarDatos();
@@ -379,7 +385,8 @@
 
       const metrosPerforados = numTaladros * profundidadProm;
       const aceroTotal = metrosPerforados; // igual que en el Excel
-      const consumos = calcularConsumos(diametro, metrosPerforados);
+      const consumos = calcularConsumos(diametro, metrosPerforados, largoBarra);
+
 
       const nuevoReg = {
         fecha,
