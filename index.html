@@ -139,13 +139,40 @@
       <h1>Registro de Perforación - Consumo de Acero, Bits, Barras y Culatines</h1>
     </div>
   </header>
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .kpi-card {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 10px 15px;
+      border-left: 4px solid #007bff;
+    }
+    .kpi-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 4px;
+    }
+    .kpi-value {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+    .kpi-subtitle {
+      font-size: 11px;
+      color: #777;
+    }
+
 
   <main>
     <section class="card">
       <h2>Ingreso de datos</h2>
       <p class="small-note">
-        Basado en tu Excel: registra metros lineales, diámetro, tipo de perforación, etc. y la página calcula automáticamente consumo de acero, bits, barras y culatines. 
-        La información queda guardada en <strong>este navegador</strong> usando <em>localStorage</em>.
+        localStorage</em>.
       </p>
       <div class="form-grid">
         <div>
@@ -217,8 +244,48 @@
         BIT: 51 mm = 100 m, 45 mm = 80, 64 mm = 100  m<br />
         BARRA: 51 mm = 300 m, 45 mm = 250 m, MF T38 (1,5 m) = 250 m*<br />
         CULATIN: 51 mm = 2000 m, 45 mm = 2000, 64 mm = 2000 m<br />
-        (Puedes pedir una versión avanzada con rendimientos editables desde la web).
-      </p>
+        </p>
+    <section class="card">
+      <h2>Dashboard de resumen</h2>
+      <div class="dashboard-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">Metros perforados</div>
+          <div class="kpi-value"><span id="kpiMetros">0</span> m</div>
+          <div class="kpi-subtitle">Suma de todos los registros</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">Acero total</div>
+          <div class="kpi-value"><span id="kpiAcero">0</span> m</div>
+          <div class="kpi-subtitle">Igual a metros perforados</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">Consumo BIT</div>
+          <div class="kpi-value"><span id="kpiBits">0</span> unid</div>
+          <div class="kpi-subtitle">Total estimado</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">Consumo BARRA</div>
+          <div class="kpi-value"><span id="kpiBarras">0</span> unid</div>
+          <div class="kpi-subtitle">Incluye MF T38 1,5 m</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">Consumo CULATIN</div>
+          <div class="kpi-value"><span id="kpiCulatines">0</span> unid</div>
+          <div class="kpi-subtitle">Todos los diámetros</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">Registros cargados</div>
+          <div class="kpi-value"><span id="kpiRegistros">0</span></div>
+          <div class="kpi-subtitle">Filas en el historial</div>
+        </div>
+      </div>
+    </section>
+
     </section>
 
     <section class="card">
@@ -258,8 +325,7 @@
         </tfoot>
       </table>
       <p class="small-note">
-        Los datos se guardan automáticamente en tu navegador (localStorage). Si abres la página de nuevo en el mismo dispositivo y navegador, seguirás viendo tu historial.
-      </p>
+        </p>
     </section>
   </main>
 
@@ -355,11 +421,22 @@
         totalCulatines += reg.consumoCulatin;
       });
 
-      document.getElementById("totalMetros").textContent = redondear(totalMetros);
+            document.getElementById("totalMetros").textContent = redondear(totalMetros);
       document.getElementById("totalAcero").textContent = redondear(totalAcero);
       document.getElementById("totalBits").textContent = redondear(totalBits);
       document.getElementById("totalBarras").textContent = redondear(totalBarras);
       document.getElementById("totalCulatines").textContent = redondear(totalCulatines);
+
+      // 🔹 Actualizar dashboard (tarjetas)
+      if (document.getElementById("kpiMetros")) {
+        document.getElementById("kpiMetros").textContent = redondear(totalMetros);
+        document.getElementById("kpiAcero").textContent = redondear(totalAcero);
+        document.getElementById("kpiBits").textContent = redondear(totalBits);
+        document.getElementById("kpiBarras").textContent = redondear(totalBarras);
+        document.getElementById("kpiCulatines").textContent = redondear(totalCulatines);
+        document.getElementById("kpiRegistros").textContent = registros.length;
+      }
+
     }
 
     function agregarRegistro() {
