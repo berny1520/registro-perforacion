@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Registro de Perforación - Asefortmec</title>
+  <title>Registro de Perforación - Consumo de Insumos</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -28,6 +28,7 @@
       height: 55px;
       border-radius: 4px;
     }
+
     main {
       padding: 20px;
     }
@@ -111,6 +112,8 @@
         font-size: 11px;
       }
     }
+
+    /* Para que el PDF salga limpio */
     @media print {
       button {
         display: none;
@@ -131,6 +134,7 @@
 <body>
   <header>
     <div class="header-content">
+      <!-- Asegúrate que el archivo exista y tenga ese nombre -->
       <img src="logo_asefortmec.png" alt="Logo Asefortmec" />
       <h1>Registro de Perforación - Consumo de Acero, Bits, Barras y Culatines</h1>
     </div>
@@ -239,6 +243,7 @@
           </tr>
         </thead>
         <tbody>
+          <!-- Filas dinámicas -->
         </tbody>
         <tfoot>
           <tr>
@@ -258,6 +263,7 @@
   </main>
 
   <script>
+    // Parámetros de rendimiento (m por unidad)
     const parametros = {
       BIT:   { "51": 100, "45": 80  },
       BARRA: { "51": 300, "45": 250 },
@@ -372,7 +378,7 @@
       }
 
       const metrosPerforados = numTaladros * profundidadProm;
-      const aceroTotal = metrosPerforados;
+      const aceroTotal = metrosPerforados; // igual que en el Excel
       const consumos = calcularConsumos(diametro, metrosPerforados);
 
       const nuevoReg = {
@@ -398,6 +404,7 @@
       guardarDatos(registros);
       refrescarTabla();
 
+      // Reset mínimo
       document.getElementById("numTaladros").value = "";
       document.getElementById("profundidadProm").value = "";
     }
@@ -409,10 +416,12 @@
       }
     }
 
+    // Botón PDF → abre cuadro de impresión (elige “Guardar como PDF”)
     function descargarPDF() {
       window.print();
     }
 
+    // Botón CSV → genera archivo para Excel / Power BI
     function exportarCSV() {
       const registros = cargarDatos();
       if (!registros.length) {
@@ -445,12 +454,10 @@
         reg.consumoCulatin
       ]);
 
-      let csvContenido = headers.join(";") + "
-";
-      for (const fila of filas) {
-        csvContenido += fila.join(";") + "
-";
-      }
+      let csvContenido = headers.join(";") + "\n";
+      filas.forEach(fila => {
+        csvContenido += fila.join(";") + "\n";
+      });
 
       const blob = new Blob([csvContenido], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
