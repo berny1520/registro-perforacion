@@ -4,22 +4,33 @@
   <meta charset="UTF-8" />
   <title>Registro de Perforación - Consumo de Insumos</title>
   <style>
+    :root {
+      --primary: #007bff;
+      --danger: #dc3545;
+      --success: #28a745;
+      --secondary: #6c757d;
+      --bg-page: #f0f2f5;
+      --card-bg: #ffffff;
+    }
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f4f4f4;
+      background: var(--bg-page);
+      color: #222;
     }
+
+    /* HEADER */
     header {
       background: #222;
       color: #fff;
       padding: 10px 20px;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
     .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
       gap: 15px;
@@ -28,21 +39,46 @@
       height: 55px;
       border-radius: 4px;
     }
+    .title-block {
+      display: flex;
+      flex-direction: column;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+    .made-by {
+      font-size: 12px;
+      color: #cccccc;
+      margin-top: 2px;
+    }
 
+    /* LAYOUT GENERAL */
     main {
-      padding: 20px;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 15px 30px;
     }
     .card {
-      background: #fff;
+      background: var(--card-bg);
       border-radius: 6px;
       padding: 15px 20px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      border: 1px solid #e1e1e1;
     }
     h2 {
       margin-top: 0;
       font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 6px;
     }
+
+    /* FORMULARIO */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -60,7 +96,17 @@
       padding: 5px 6px;
       font-size: 13px;
       box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(0,123,255,0.2);
+    }
+
+    /* BOTONES */
     button {
       padding: 8px 16px;
       font-size: 14px;
@@ -69,23 +115,34 @@
       cursor: pointer;
       margin-right: 5px;
       margin-bottom: 5px;
+      transition: background 0.15s ease, transform 0.05s ease;
     }
     button#addRowBtn {
-      background: #007bff;
+      background: var(--primary);
       color: #fff;
     }
     button#clearDataBtn {
-      background: #dc3545;
+      background: var(--danger);
       color: #fff;
     }
     button#downloadPdfBtn {
-      background: #28a745;
+      background: var(--success);
       color: #fff;
     }
     button#exportCsvBtn {
-      background: #6c757d;
+      background: var(--secondary);
       color: #fff;
     }
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+    button:active {
+      transform: translateY(0);
+      filter: brightness(0.97);
+    }
+
+    /* TABLA */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -97,7 +154,8 @@
       text-align: center;
     }
     th {
-      background: #eee;
+      background: #f5f5f5;
+      font-weight: bold;
     }
     tfoot td {
       font-weight: bold;
@@ -113,32 +171,7 @@
       }
     }
 
-    /* Para que el PDF salga limpio */
-    @media print {
-      button {
-        display: none;
-      }
-      .form-grid {
-        display: none;
-      }
-      .card:first-of-type h2,
-      .card:first-of-type p.small-note {
-        display: none;
-      }
-      body {
-        background: #fff;
-      }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="header-content">
-      <!-- Asegúrate que el archivo exista y tenga ese nombre -->
-      <img src="logo_asefortmec.png" alt="Logo Asefortmec" />
-      <h1>Registro de Perforación - Consumo de Acero, Bits, Barras y Culatines</h1>
-    </div>
-  </header>
+    /* DASHBOARD */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -149,7 +182,8 @@
       background: #f8f9fa;
       border-radius: 6px;
       padding: 10px 15px;
-      border-left: 4px solid #007bff;
+      border-left: 4px solid var(--primary);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
     .kpi-title {
       font-size: 12px;
@@ -167,12 +201,67 @@
       color: #777;
     }
 
+    /* PIE DE PÁGINA (CRÉDITO) */
+    .footer {
+      text-align: center;
+      padding: 10px 15px 20px;
+      font-size: 12px;
+      color: #666;
+      margin-top: 10px;
+      border-top: 1px solid #ddd;
+      background: #fafafa;
+    }
+
+    /* Para que el PDF salga limpio */
+    @media print {
+      header {
+        box-shadow: none;
+      }
+      main {
+        max-width: 100%;
+        margin: 0;
+        padding: 0 10mm;
+      }
+      button {
+        display: none;
+      }
+      .form-grid {
+        display: none;
+      }
+      .card:first-of-type h2,
+      .card:first-of-type p.small-note {
+        display: none;
+      }
+      body {
+        background: #fff;
+      }
+      .footer {
+        margin-top: 30px;
+        border-top: none;
+        background: #fff;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <img src="logo_asefortmec.png" alt="Logo Asefortmec" />
+      <div class="title-block">
+        <h1>Registro de Perforación – Consumo de Acero, Bits, Barras y Culatines</h1>
+        <div class="made-by">
+          Creado por <strong>Bernardo Ojeda Molina</strong> – Jefe de Innovación y Formación, Asefortmec SPA
+        </div>
+      </div>
+    </div>
+  </header>
 
   <main>
+    <!-- Ingreso de datos -->
     <section class="card">
       <h2>Ingreso de datos</h2>
       <p class="small-note">
-        localStorage</em>.
+        Registra los datos de perforación por frente y turno. Los registros se guardan automáticamente en este navegador usando <strong>localStorage</strong>.
       </p>
       <div class="form-grid">
         <div>
@@ -217,7 +306,7 @@
             <option value="">Seleccionar...</option>
             <option value="51">51 (Avance)</option>
             <option value="45">45 (Fortificación)</option>
-	    <option value="64">64 (Avance pesado)</option>
+            <option value="64">64 (Avance pesado)</option>
           </select>
         </div>
         <div>
@@ -240,11 +329,15 @@
       <button id="exportCsvBtn">Exportar datos a CSV</button>
 
       <p class="small-note">
-        Nota: rendimientos por defecto:<br />
-        BIT: 51 mm = 100 m, 45 mm = 80, 64 mm = 100  m<br />
+        <strong>Supuestos de rendimiento:</strong><br />
+        BIT: 51 mm = 100 m, 45 mm = 80 m, 64 mm = 100 m<br />
         BARRA: 51 mm = 300 m, 45 mm = 250 m, MF T38 (1,5 m) = 250 m*<br />
-        CULATIN: 51 mm = 2000 m, 45 mm = 2000, 64 mm = 2000 m<br />
-        </p>
+        CULATIN: 51 mm = 2000 m, 45 mm = 2000 m, 64 mm = 2000 m<br />
+        *Ajustar según experiencia / contrato.
+      </p>
+    </section>
+
+    <!-- Dashboard -->
     <section class="card">
       <h2>Dashboard de resumen</h2>
       <div class="dashboard-grid">
@@ -286,8 +379,7 @@
       </div>
     </section>
 
-    </section>
-
+    <!-- Registros históricos -->
     <section class="card">
       <h2>Registros históricos</h2>
       <table id="regTable">
@@ -324,10 +416,13 @@
           </tr>
         </tfoot>
       </table>
-      <p class="small-note">
-        </p>
+      <p class="small-note"></p>
     </section>
   </main>
+
+  <footer class="footer">
+    Desarrollado por <strong>Bernardo Ojeda Molina – Asefortmec SPA</strong> · Ingeniería &amp; Innovación en Perforación Subterránea
+  </footer>
 
   <script>
     // Parámetros de rendimiento (m por unidad)
@@ -354,25 +449,27 @@
     }
 
     function calcularConsumos(diametro, metrosPerforados, largoBarra) {
-      const d = String(diametro);  
+      const d = String(diametro);
       const rendBit = parametros.BIT[d] || 0;
+
+      // BARRA: por diámetro, pero si es MF T38 1,5 m usamos rendimiento especial
       let rendBarra = parametros.BARRA[d] || 0;
       if (Math.abs(largoBarra - 1.5) < 0.01 && parametros.BARRA_MF_T38) {
-      rendBarra = parametros.BARRA_MF_T38;
-  }
+        rendBarra = parametros.BARRA_MF_T38;
+      }
 
       const rendCulatin = parametros.CULATIN[d] || 0;
+
       const bit = rendBit ? metrosPerforados / rendBit : 0;
       const barra = rendBarra ? metrosPerforados / rendBarra : 0;
       const culatin = rendCulatin ? metrosPerforados / rendCulatin : 0;
 
       return {
-    	bit: redondear(bit),
-    	barra: redondear(barra),
-    	culatin: redondear(culatin)
-  };
-}
-
+        bit: redondear(bit),
+        barra: redondear(barra),
+        culatin: redondear(culatin)
+      };
+    }
 
     function refrescarTabla() {
       const registros = cargarDatos();
@@ -414,29 +511,28 @@
 
         tbody.appendChild(tr);
 
-        totalMetros += reg.metrosPerforados;
-        totalAcero += reg.aceroTotal;
-        totalBits += reg.consumoBit;
-        totalBarras += reg.consumoBarra;
-        totalCulatines += reg.consumoCulatin;
+        totalMetros   += reg.metrosPerforados;
+        totalAcero    += reg.aceroTotal;
+        totalBits     += reg.consumoBit;
+        totalBarras   += reg.consumoBarra;
+        totalCulatines+= reg.consumoCulatin;
       });
 
-            document.getElementById("totalMetros").textContent = redondear(totalMetros);
-      document.getElementById("totalAcero").textContent = redondear(totalAcero);
-      document.getElementById("totalBits").textContent = redondear(totalBits);
-      document.getElementById("totalBarras").textContent = redondear(totalBarras);
+      document.getElementById("totalMetros").textContent    = redondear(totalMetros);
+      document.getElementById("totalAcero").textContent     = redondear(totalAcero);
+      document.getElementById("totalBits").textContent      = redondear(totalBits);
+      document.getElementById("totalBarras").textContent    = redondear(totalBarras);
       document.getElementById("totalCulatines").textContent = redondear(totalCulatines);
 
-      // 🔹 Actualizar dashboard (tarjetas)
+      // Dashboard
       if (document.getElementById("kpiMetros")) {
-        document.getElementById("kpiMetros").textContent = redondear(totalMetros);
-        document.getElementById("kpiAcero").textContent = redondear(totalAcero);
-        document.getElementById("kpiBits").textContent = redondear(totalBits);
-        document.getElementById("kpiBarras").textContent = redondear(totalBarras);
+        document.getElementById("kpiMetros").textContent    = redondear(totalMetros);
+        document.getElementById("kpiAcero").textContent     = redondear(totalAcero);
+        document.getElementById("kpiBits").textContent      = redondear(totalBits);
+        document.getElementById("kpiBarras").textContent    = redondear(totalBarras);
         document.getElementById("kpiCulatines").textContent = redondear(totalCulatines);
         document.getElementById("kpiRegistros").textContent = registros.length;
       }
-
     }
 
     function agregarRegistro() {
@@ -461,9 +557,8 @@
       }
 
       const metrosPerforados = numTaladros * profundidadProm;
-      const aceroTotal = metrosPerforados; // igual que en el Excel
+      const aceroTotal = metrosPerforados;
       const consumos = calcularConsumos(diametro, metrosPerforados, largoBarra);
-
 
       const nuevoReg = {
         fecha,
@@ -488,7 +583,6 @@
       guardarDatos(registros);
       refrescarTabla();
 
-      // Reset mínimo
       document.getElementById("numTaladros").value = "";
       document.getElementById("profundidadProm").value = "";
     }
@@ -500,12 +594,10 @@
       }
     }
 
-    // Botón PDF → abre cuadro de impresión (elige “Guardar como PDF”)
     function descargarPDF() {
       window.print();
     }
 
-    // Botón CSV → genera archivo para Excel / Power BI
     function exportarCSV() {
       const registros = cargarDatos();
       if (!registros.length) {
