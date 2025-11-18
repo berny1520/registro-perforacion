@@ -142,6 +142,24 @@
       filter: brightness(0.97);
     }
 
+    /* BOTONES ACCIONES EN TABLA */
+    .btn-accion {
+      padding: 4px 8px;
+      font-size: 11px;
+      margin: 2px;
+      border-radius: 3px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-editar {
+      background: #17a2b8;
+      color: #fff;
+    }
+    .btn-eliminar {
+      background: #dc3545;
+      color: #fff;
+    }
+
     /* TABLA */
     table {
       width: 100%;
@@ -250,7 +268,7 @@
       <div class="title-block">
         <h1>Registro de Perforación – Consumo de Acero, Bits, Barras y Culatines</h1>
         <div class="made-by">
-          Creado por <strong>Bernardo Ojeda Molina</strong> – Jefe de Innovación y Formación,
+          Creado por <strong>Bernardo Ojeda Molina</strong> – Jefe de Innovación y Formación
         </div>
       </div>
     </div>
@@ -400,6 +418,7 @@
             <th>Consumo BIT (unid)</th>
             <th>Consumo BARRA (unid)</th>
             <th>Consumo CULATIN (unid)</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -413,6 +432,7 @@
             <td id="totalBits">0</td>
             <td id="totalBarras">0</td>
             <td id="totalCulatines">0</td>
+            <td></td>
           </tr>
         </tfoot>
       </table>
@@ -434,6 +454,7 @@
     };
 
     const STORAGE_KEY = "registro_perforacion_datos";
+    let indiceEdicion = null; // null = agregando, número = editando
 
     function cargarDatos() {
       const data = localStorage.getItem(STORAGE_KEY);
@@ -509,13 +530,21 @@
           tr.appendChild(td);
         });
 
+        // Acciones
+        const tdAcciones = document.createElement("td");
+        tdAcciones.innerHTML = `
+          <button type="button" class="btn-accion btn-editar" onclick="editarRegistro(${index})">Editar</button>
+          <button type="button" class="btn-accion btn-eliminar" onclick="eliminarRegistro(${index})">Eliminar</button>
+        `;
+        tr.appendChild(tdAcciones);
+
         tbody.appendChild(tr);
 
-        totalMetros   += reg.metrosPerforados;
-        totalAcero    += reg.aceroTotal;
-        totalBits     += reg.consumoBit;
-        totalBarras   += reg.consumoBarra;
-        totalCulatines+= reg.consumoCulatin;
+        totalMetros    += reg.metrosPerforados;
+        totalAcero     += reg.aceroTotal;
+        totalBits      += reg.consumoBit;
+        totalBarras    += reg.consumoBarra;
+        totalCulatines += reg.consumoCulatin;
       });
 
       document.getElementById("totalMetros").textContent    = redondear(totalMetros);
@@ -533,6 +562,34 @@
         document.getElementById("kpiCulatines").textContent = redondear(totalCulatines);
         document.getElementById("kpiRegistros").textContent = registros.length;
       }
+    }
+
+    function editarRegistro(indice) {
+      const registros = cargarDatos();
+      const reg = registros[indice];
+
+      document.getElementById("fecha").value           = reg.fecha;
+      document.getElementById("turno").value           = reg.turno;
+      document.getElementById("faena").value           = reg.faena;
+      document.getElementById("equipo").value          = reg.equipo;
+      document.getElementById("frente").value          = reg.frente;
+      document.getElementById("tipoPerforacion").value = reg.tipoPerforacion;
+      document.getElementById("diametro").value        = reg.diametro;
+      document.getElementById("numTaladros").value     = reg.numTaladros;
+      document.getElementById("profundidadProm").value = reg.profundidadProm;
+      document.getElementById("largoBarra").value      = reg.largoBarra || "";
+
+      indiceEdicion = indice;
+      document.getElementById("addRowBtn").textContent = "Guardar cambios";
+    }
+
+    function eliminarRegistro(indice) {
+      const registros = cargarDatos();
+      if (!confirm("¿Seguro que deseas eliminar este registro?")) return;
+
+      registros.splice(indice, 1);
+      guardarDatos(registros);
+      refrescarTabla();
     }
 
     function agregarRegistro() {
@@ -579,17 +636,30 @@
       };
 
       const registros = cargarDatos();
-      registros.push(nuevoReg);
+
+      if (indiceEdicion !== null) {
+        // Editando registro existente
+        registros[indiceEdicion] = nuevoReg;
+        indiceEdicion = null;
+        document.getElementById("addRowBtn").textContent = "Agregar registro";
+      } else {
+        // Agregando nuevo
+        registros.push(nuevoReg);
+      }
+
       guardarDatos(registros);
       refrescarTabla();
 
       document.getElementById("numTaladros").value = "";
       document.getElementById("profundidadProm").value = "";
+      document.getElementById("largoBarra").value = "";
     }
 
     function limpiarTodo() {
       if (confirm("¿Seguro que deseas borrar todos los registros guardados?")) {
         localStorage.removeItem(STORAGE_KEY);
+        indiceEdicion = null;
+        document.getElementById("addRowBtn").textContent = "Agregar registro";
         refrescarTabla();
       }
     }
